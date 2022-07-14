@@ -67,18 +67,31 @@ public class MainActivity extends AppCompatActivity {
         ContentResolver contentResolver = getContentResolver();//la clase que me permite leer de un content provider
 
         //seleccionamos TODOS los contactos
-        Cursor cursor = contentResolver.query(uri_contactos, null, null, null, null);
+        //Cursor cursor = contentResolver.query(uri_contactos, null, null, null, null);
+        //Seleccionar Todos los columnas de todos los contactos, ordenado alfabéticamente de menor a mayor por el Nombre del contacto
+        //Cursor cursor = contentResolver.query(uri_contactos, null, null, null, ContactsContract.Contacts.DISPLAY_NAME +" ASC");
+        //Seleccionar Todos los columnas de todos los contactos, ordenado alfabéticamente de mayor a menor por NÚMERO
+        //Cursor cursor = contentResolver.query(uri_contactos, null, null, null, ContactsContract.CommonDataKinds.Phone.NUMBER +" DESC");
+        //Seleccionar Todos los columnas de todos los contactos, que tengan Número de teléfono
+        //Cursor cursor = contentResolver.query(uri_contactos, null, ContactsContract.Contacts.HAS_PHONE_NUMBER +" = 1", null, null);
+        //Selecciono todos los contactos cuyo nombre empiece por M pero sólo su número
+        String[] parametros  = {"M%"}; // selectionArgs % es comodín
+        String[] columnas = {ContactsContract.CommonDataKinds.Phone.NUMBER};
+        Cursor cursor = contentResolver.query(uri_contactos, columnas, ContactsContract.Contacts.DISPLAY_NAME +" LIKE ?" ,parametros , null);
+
 
         if (cursor.moveToFirst())
         {
-            Log.d("ETIQUETA_LOG", "AL menos tengo un resultado ");
+            //Log.d("ETIQUETA_LOG", "AL menos tengo un resultado ");
+            Log.d("ETIQUETA_LOG", "TOTAL RESULTADOS =  " + cursor.getCount());
+            //Log.d("ETIQUETA_LOG", "AL menos tengo un resultado " + cursor.getCount());
 
             int numcolumna_telf = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);//saber que cólumna es la que tiene los teléfonos
             String num_telf_actual = null;
             int i = 1;
             do {
                 num_telf_actual = cursor.getString(numcolumna_telf);//accedo al valor del telefono
-                Log.d("ETIQUETA_LOG", "NUM TELF" + i +" = " + num_telf_actual);
+                Log.d("ETIQUETA_LOG", "NUM TELF " + i +" = " + num_telf_actual);
                 i++;
             }while (cursor.moveToNext());
 
